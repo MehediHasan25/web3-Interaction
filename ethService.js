@@ -54,23 +54,61 @@ async function setNID(key, nid, nidImage) {
     //return tx;
 }
 
+async function setTIN(key, tin, tinImage){
+    var privateKey = Buffer.from(priKey, 'hex');
+    let nonce = await web3.eth.getTransactionCount(web3.eth.defaultAccount);
+
+    var rawTransaction1={
+        "from": web3.eth.defaultAccount,
+        "gasPrice": web3.utils.toHex(20 * 1e9),
+        "gasLimit": web3.utils.toHex(210000),
+        "to": contractAddress,
+        "value": "0x0",
+        "data": KycContract.methods.setTIN(key, tin, tinImage).encodeABI(),
+        "nonce": web3.utils.toHex(nonce)
+
+    }
+    var transaction = new Tx(rawTransaction1);
+    transaction.sign(privateKey);
+
+    web3.eth.sendSignedTransaction('0x'+transaction.serialize().toString('hex'), (err, txHash) => {
+        console.log(txHash);
+    });
+    console.log("SetTin Exiting");
+}
+
 async function getNID(key) {
     let nidDetails = await KycContract.methods.getNID(key).call();
     //console.log(nidDetails);
     return nidDetails;
 }
 
+async function getTIN(key){
+    let tinDetails = await KycContract.methods.getTIN(key).call();
+    console.log(tinDetails);
+    return getTIN;
+}
 
 async function main() {
    // setNID("mehedi", "{name: 'mehedi hasan'}", "jsbfbjkdfbjfbsjkgbjksdgbljkdgbjkdgbkjsdgbfsjkbfgjksbfjsbjgk");
 
     //console.log(tx);
 
-    let nd = await getNID("mehedi");
+    // let nd = await getNID("mehedi");
 
-    nd.forEach(item => {
-        console.log(item);
-    })
+    // nd.forEach(item => {
+    //     console.log(item);
+    // })
+    //setTIN("Nahid", "{name: Nahid Chowdhury}", "where is my TIn");
+    
+
+    let tn= await getTIN("Nahid");
+    console.log(tn);
+    
+    // tn.forEach( tinitem =>{
+    //     console.log(tinitem);
+    // })
+    
 }
 
 main();
